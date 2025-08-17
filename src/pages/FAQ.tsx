@@ -1,56 +1,88 @@
-import React, { useState } from 'react';
+import React from 'react';
+
 const FAQ = () => {
   const faqs = [{
-    question: 'How do you match tutors with students?',
-    answer: "We match tutors based on the student's academic needs, learning style, personality, and schedule. We carefully screen all our tutors to ensure they have the necessary qualifications and experience to provide effective instruction."
+    category: "For Parents",
+    items: [{
+      question: 'How does the matching process work?',
+      answer: "We pair you with a tutor based on your requirements. You’ll receive profiles to choose from, and lessons can start as soon as you confirm."
+    }, {
+      question: 'How are tutors screened?',
+      answer: 'Every tutor undergoes qualification checks and identity verification (optionally via Singpass).'
+    }, {
+      question: 'What subjects and levels are available?',
+      answer: 'We cover most subjects from Primary to JC.'
+    }, {
+      question: 'How are lessons conducted?',
+      answer: 'Either online or in-person, depending on your choice and the tutor’s availability.'
+    }, {
+      question: 'How do I pay for lessons?',
+      answer: 'Payments can be made via PayNow, bank transfer, or credit card in the website.'
+    }, {
+      question: 'What if my child misses a lesson?',
+      answer: 'Notify your tutor early and a make-up classes can be arranged.'
+    }, {
+      question: 'Is my data safe?',
+      answer: 'Yes. We are PDPA-compliant and store data securely.'
+    }]
   }, {
-    question: 'Where do tutoring sessions take place?',
-    answer: 'We offer both online tutoring through our secure platform and in-person tutoring options depending on your location and preference. Our online platform includes video conferencing, shared whiteboard, and document sharing capabilities.'
-  }, {
-    question: 'How much does tutoring cost?',
-    answer: 'Our tutoring rates vary based on the subject, level of instruction, and tutor experience. We offer different packages to accommodate various budgets. Please visit our Pricing page for detailed information on our current rates.'
-  }, {
-    question: 'How often should my child meet with a tutor?',
-    answer: "The frequency of sessions depends on your child's needs and goals. Some students benefit from weekly sessions, while others may need more intensive support with 2-3 sessions per week. Your tutor will recommend an optimal schedule after the initial assessment."
-  }, {
-    question: 'What subjects do you offer tutoring in?',
-    answer: 'We offer tutoring in a wide range of subjects including Mathematics, Science, English, History, Foreign Languages, Test Preparation, and more. Our tutors specialize in various grade levels from elementary school through college.'
-  }, {
-    question: "Can I change tutors if it's not a good fit?",
-    answer: "Absolutely! We want your child to have the best possible experience. If you feel the current tutor isn't the right match, we'll work with you to find a more suitable tutor at no additional cost."
-  }, {
-    question: 'Do you offer any guarantees?',
-    answer: "We're confident in our tutors' abilities to help your child improve academically. We offer a satisfaction guarantee for the first session – if you're not satisfied, the session is free and we'll work to find a better match."
-  }, {
-    question: "How do I track my child's progress?",
-    answer: "Depending on your chosen plan, you'll receive regular progress reports. These reports outline areas of improvement, ongoing challenges, and recommendations for continued growth. You can also schedule check-in meetings with tutors."
+    category: "Questions for Tutors",
+    items: [{
+      question: 'How do I sign up?',
+      answer: 'Fill in our online form, upload documents, and complete verification.'
+    }, {
+      question: 'How will I get students?',
+      answer: 'Our algorithm recommends you to parents looking for your expertise.'
+    }, {
+      question: 'What are the fees?',
+      answer: 'We only take a commission for the first month’s lessons with each new student.'
+    }, {
+      question: 'Can I set my own rates?',
+      answer: 'Yes, and you can update them anytime.'
+    }, {
+      question: 'What if a student cancels a lesson?',
+      answer: 'We recommend a 24-hour notice policy, but you can set your own rules.'
+    }, {
+      question: 'How do I get paid?',
+      answer: 'Payments are transferred via PayNow or bank transfer after lessons are completed.'
+    }, {
+      question: 'Can I teach online only?',
+      answer: 'Yes. Many tutors choose to teach only online.'
+    }]
   }];
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const toggleFAQ = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-  return <main className="w-full bg-white">
+
+  return (
+    <main className="w-full bg-white dark:bg-gray-900">
       <section className="py-16 md:py-24 container mx-auto px-4">
-        <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-800 mb-6">
+        <h1 className="text-4xl md:text-5xl font-bold text-centere text-gray-800 dark:text-white mb-6">
           Frequently Asked Questions
         </h1>
-        <p className="text-xl text-gray-600 text-center max-w-2xl mx-auto mb-16">
+        <p className="text-xl text-gray-600 dark:text-gray-300 text-center max-w-2xl mx-auto mb-16">
           Find answers to common questions about our tutoring services.
         </p>
         <div className="max-w-3xl mx-auto">
-          {faqs.map((faq, index) => <div key={index} className="mb-4 border-b border-gray-200 pb-4">
-              <button className="flex justify-between items-center w-full text-left font-medium text-gray-800 hover:text-blue-600 focus:outline-none transition-colors" onClick={() => toggleFAQ(index)}>
-                <span className="text-lg">{faq.question}</span>
-                <svg className={`w-5 h-5 transition-transform ${openIndex === index ? 'transform rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </button>
-              <div className={`mt-2 text-gray-600 ${openIndex === index ? 'block' : 'hidden'}`}>
-                {faq.answer}
-              </div>
-            </div>)}
+          {faqs.map((faqGroup, groupIndex) => (
+            <div key={groupIndex} className="mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+                {faqGroup.category}
+              </h2>
+              {faqGroup.items.map((faq, index) => (
+                <details key={index} className="mb-4 border-b border-gray-200 dark:border-gray-700 pb-4">
+                  <summary className="flex justify-between items-center w-full text-left font-medium text-gray-800 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none transition-colors cursor-pointer">
+                    <span className="text-lg">{faq.question}</span>
+                    <svg className="w-5 h-5 details-toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </summary>
+                  <div className="mt-2 text-gray-600 dark:text-gray-300">{faq.answer}</div>
+                </details>
+              ))}
+            </div>
+          ))}
         </div>
       </section>
-    </main>;
+    </main>
+  );
 };
+
 export default FAQ;
