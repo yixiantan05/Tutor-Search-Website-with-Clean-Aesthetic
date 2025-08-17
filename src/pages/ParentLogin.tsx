@@ -758,7 +758,7 @@ const ParentLogin = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Subjects</h3>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {['Mathematics', 'Physics', 'English Literature', 'Writing', 'Chemistry', 'Biology', 'Computer Science', 'History', 'Social Studies', 'Spanish', 'French'].map(subject => (
+                                                    {['Mathematics', 'Physics', 'English ', 'Literature', 'Chemistry', 'Biology', 'Chinese', 'Principle of Accounting', 'Geography', 'Economics'].map(subject => (
                                                         <button
                                                             key={subject}
                                                             onClick={() => toggleSubjectFilter(subject)}
@@ -800,7 +800,7 @@ const ParentLogin = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Tutor Background</h3>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {['PhD', 'University Professor', 'Published Author', 'Certified Teacher', 'Biochemistry Graduate', 'Software Engineer', 'History Major', 'Linguist'].map(background => (
+                                                    {[ 'MOE Teacher', 'Undergraduate', 'Part-Time Tutors', 'Full-Time Tutors'].map(background => (
                                                         <button
                                                             key={background}
                                                             onClick={() => toggleTutorBackgroundFilter(background)}
@@ -814,7 +814,7 @@ const ParentLogin = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Location</h3>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {['New York, NY', 'Boston, MA', 'Chicago, IL', 'San Francisco, CA', 'Austin, TX', 'Miami, FL'].map(location => (
+                                                    {['North', 'South', 'East', 'West', 'Central'].map(location => (
                                                         <button
                                                             key={location}
                                                             onClick={() => toggleLocationFilter(location)}
@@ -828,7 +828,7 @@ const ParentLogin = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Grade Level</h3>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(grade => (
+                                                    {['P3', 'P4', 'P5', 'P6', 'Sec 1', 'Sec 2', 'Sec 3', 'Sec 4', 'JC 1', 'JC 2'].map(grade => (
                                                         <button
                                                             key={grade}
                                                             onClick={() => toggleGradeFilter(grade)}
