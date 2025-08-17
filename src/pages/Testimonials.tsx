@@ -44,52 +44,52 @@ const Testimonials = () => {
     const hasHalfStar = rating % 1 !== 0;
     // Add full stars
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<StarIcon key={`full-${i}`} className="h-5 w-5 text-yellow-400" fill="currentColor" />);
+      stars.push(<StarIcon key={`full-${i}`} className="h-5 w-5 text-yellow-400 dark:text-yellow-500" fill="currentColor" />);
     }
     // Add half star if needed
     if (hasHalfStar) {
       stars.push(<div key="half" className="relative">
-          <StarIcon className="h-5 w-5 text-gray-300" fill="currentColor" />
+          <StarIcon className="h-5 w-5 text-gray-300 dark:text-gray-700" fill="currentColor" />
           <div className="absolute inset-0 overflow-hidden" style={{
           width: '50%'
         }}>
-            <StarIcon className="h-5 w-5 text-yellow-400" fill="currentColor" />
+            <StarIcon className="h-5 w-5 text-yellow-400 dark:text-yellow-500" fill="currentColor" />
           </div>
         </div>);
     }
     // Add empty stars
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<StarIcon key={`empty-${i}`} className="h-5 w-5 text-gray-300" fill="currentColor" />);
+      stars.push(<StarIcon key={`empty-${i}`} className="h-5 w-5 text-gray-300 dark:text-gray-700" fill="currentColor" />);
     }
     return stars;
   };
-  return <main className="w-full bg-white">
+  return <main className="w-full bg-white dark:bg-gray-900 ">
       <section className="py-16 md:py-24 container mx-auto px-4">
-        <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-800 mb-6">
-          Success Stories
+        <h1 className="text-4xl md:text-5xl font-bold text-center text-gray-800 dark:text-white mb-6">
+          Trusted by Parents, Loved by Students
         </h1>
-        <p className="text-xl text-gray-600 text-center max-w-2xl mx-auto mb-16">
-          See what parents and students are saying about our tutoring services.
+        <p className="text-xl text-gray-600 dark:text-gray-300 text-center max-w-2xl mx-auto mb-16">
+          See how our tutors have helped students excel and gain confidence in every subject.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => <div key={index} className="bg-gray-50 p-6 rounded-lg">
+          {testimonials.map((testimonial, index) => <div key={index} className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
               <div className="flex items-center mb-2">
                 <img src={testimonial.image} alt={testimonial.name} className="w-12 h-12 rounded-full object-cover mr-4" />
                 <div>
-                  <h3 className="font-medium text-gray-800">
+                  <h3 className="font-medium text-gray-800 dark:text-white">
                     {testimonial.name}
                   </h3>
-                  <p className="text-gray-600 text-sm">{testimonial.role}</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">{testimonial.role}</p>
                 </div>
               </div>
               <div className="flex mb-3">
                 {renderStars(testimonial.rating)}
-                <span className="ml-2 text-sm text-gray-500">
+                <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
                   {testimonial.rating.toFixed(1)}
                 </span>
               </div>
-              <blockquote className="text-gray-600 italic">
+              <blockquote className="text-gray-600 dark:text-gray-300 italic">
                 "{testimonial.quote}"
               </blockquote>
             </div>)}
