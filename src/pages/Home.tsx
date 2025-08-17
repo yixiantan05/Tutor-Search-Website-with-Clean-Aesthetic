@@ -99,7 +99,7 @@ const Home = () => {
             Subjects We Provide
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {['Mathematics', 'Economics', 'English', 'Chinese', 'Physics', 'Chemistry', 'Biology', 'Geography', 'History', 'Literature'].map(subject => <div key={subject} className="bg-gray-50 p-4 rounded-lg text-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ">
+            {['Mathematics', 'Economics', 'English', 'Chinese', 'Physics', 'Chemistry', 'Biology', 'Geography', 'History', 'Literature', 'Principle of Accounting'].map(subject => <div key={subject} className="bg-gray-50 p-4 rounded-lg text-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ">
                 <p className="font-medium text-gray-800 ">{subject}</p>
               </div>)}
           </div>
