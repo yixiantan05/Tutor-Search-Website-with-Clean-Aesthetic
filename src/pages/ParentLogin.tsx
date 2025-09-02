@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { UserIcon, StarIcon, FilterIcon, CalendarIcon, MessageSquareIcon, TrendingUpIcon, ChevronLeftIcon, ChevronRightIcon, PlusCircle, Trash2 } from 'lucide-react';
+import ParentProfile from './ParentProfile';
+import ProgressTracker from './ProgressTracker';
+import Messages from './Messages';
+import Calendar from './Calendar';
 
 // Define types for the form data
 interface ChildData {
@@ -17,13 +21,6 @@ interface ParentProfileData {
 }
 
 const ParentLogin = () => {
-    // Academic levels for the child's form
-    const academicLevels = [
-        'Primary (P1-P6)',
-        'Secondary (S1-S4/5)',
-        'Junior College (JC1-JC2)'
-    ];
-
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [activeTab, setActiveTab] = useState('tutors');
     const [activeFilters, setActiveFilters] = useState({
@@ -183,6 +180,16 @@ const ParentLogin = () => {
     const [selectedTutor, setSelectedTutor] = useState(null);
     const [chatView, setChatView] = useState(false);
     const [calendarView, setCalendarView] = useState(false);
+    const [parentProfile, setParentProfile] = useState<ParentProfileData>({
+        name: 'Sarah Johnson',
+        image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80',
+        email: 'sarah.johnson@example.com',
+        phone: '+1-555-123-4567',
+        children: [
+            { childName: 'Emily Johnson', childAcademicLevel: 'Secondary (S1-S4/5)' },
+            { childName: 'Leo Johnson', childAcademicLevel: 'Primary (P1-P6)' }
+        ]
+    });
     const [recentMessages, setRecentMessages] = useState([{
         tutorId: 1,
         tutorName: 'Dr. Jennifer Miller',
@@ -223,7 +230,6 @@ const ParentLogin = () => {
         time: '5:00 PM - 6:30 PM',
         online: true
     }]);
-    const [currentMonth, setCurrentMonth] = useState(new Date());
     const [studentProgress, setStudentProgress] = useState([{
         id: 1,
         name: 'Emily Johnson',
@@ -245,85 +251,10 @@ const ParentLogin = () => {
         lastUpdated: '2023-09-10',
         notes: "Michael is struggling with probability concepts. I've provided additional practice problems."
     }]);
-    
-    // Updated parent profile state to include registration data
-    const [parentProfile, setParentProfile] = useState<ParentProfileData>({
-        name: 'Sarah Johnson',
-        image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80',
-        email: 'sarah.johnson@example.com',
-        phone: '+1-555-123-4567',
-        children: [
-            { childName: 'Emily Johnson', childAcademicLevel: 'Secondary (S1-S4/5)' },
-            { childName: 'Leo Johnson', childAcademicLevel: 'Primary (P1-P6)' }
-        ]
-    });
-    
-    const [editedProfile, setEditedProfile] = useState<ParentProfileData>(parentProfile);
-
-    useEffect(() => {
-        setEditedProfile(parentProfile);
-    }, [parentProfile]);
 
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoggedIn(true);
-    };
-
-    const handleSaveProfile = (e: React.FormEvent) => {
-        e.preventDefault();
-        setParentProfile(editedProfile);
-        alert("Profile updated successfully!");
-    };
-
-    const handleParentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setEditedProfile(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setEditedProfile(prev => ({
-                    ...prev,
-                    image: reader.result as string
-                }));
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handleChildChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        const newChildren = [...editedProfile.children];
-        newChildren[index] = { ...newChildren[index], [name]: value };
-        setEditedProfile(prev => ({
-            ...prev,
-            children: newChildren
-        }));
-    };
-
-    const addChild = () => {
-        setEditedProfile(prev => ({
-            ...prev,
-            children: [...prev.children, {
-                childName: '',
-                childAcademicLevel: ''
-            }]
-        }));
-    };
-
-    const removeChild = (index: number) => {
-        const newChildren = [...editedProfile.children];
-        newChildren.splice(index, 1);
-        setEditedProfile(prev => ({
-            ...prev,
-            children: newChildren
-        }));
     };
 
     const toggleSubjectFilter = subject => {
@@ -405,28 +336,6 @@ const ParentLogin = () => {
         return true;
     });
 
-    const getTopMatches = () => {
-        const scoredTutors = tutors.map(tutor => {
-            let score = 0;
-            if (activeFilters.subjects.length > 0) {
-                const matchedSubjects = tutor.subjects.filter(subject => activeFilters.subjects.includes(subject));
-                score += (matchedSubjects.length / activeFilters.subjects.length) * 10;
-            }
-            if (activeFilters.traits.length > 0) {
-                const matchedTraits = tutor.traits.filter(trait => activeFilters.traits.includes(trait));
-                score += (matchedTraits.length / activeFilters.traits.length) * 8;
-            }
-            const priceScore = 5 - Math.abs(tutor.hourlyRate - activeFilters.priceRange[0]) / 10;
-            score += Math.max(0, priceScore);
-            score += tutor.rating;
-            return {
-                ...tutor,
-                matchScore: score
-            };
-        });
-        return scoredTutors.sort((a, b) => b.matchScore - a.matchScore).slice(0, 3);
-    };
-
     const handleMessageTutor = tutor => {
         setSelectedTutor(tutor);
         setChatView(true);
@@ -435,80 +344,6 @@ const ParentLogin = () => {
     const handleScheduleSession = tutor => {
         setSelectedTutor(tutor);
         setCalendarView(true);
-    };
-
-    const renderCalendarHeader = () => {
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        return (
-            <div className="flex justify-between items-center mb-4">
-                <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                    <ChevronLeftIcon className="h-5 w-5" />
-                </button>
-                <h2 className="text-xl font-semibold">
-                    {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
-                </h2>
-                <button onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
-                    <ChevronRightIcon className="h-5 w-5" />
-                </button>
-            </div>
-        );
-    };
-
-    const renderCalendarDays = () => {
-        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        return (
-            <div className="grid grid-cols-7 mb-2">
-                {days.map(day => (
-                    <div key={day} className="text-center font-medium text-gray-500 dark:text-gray-400 text-sm py-2">
-                        {day}
-                    </div>
-                ))}
-            </div>
-        );
-    };
-
-    const renderCalendarCells = () => {
-        const year = currentMonth.getFullYear();
-        const month = currentMonth.getMonth();
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const firstDayOfWeek = firstDay.getDay();
-        const daysInMonth = lastDay.getDate();
-        const cells = [];
-        for (let i = 0; i < firstDayOfWeek; i++) {
-            cells.push(<div key={`empty-${i}`} className="p-2 border border-gray-200 dark:border-gray-700"></div>);
-        }
-        const lessonDates = {};
-        upcomingLessons.forEach(lesson => {
-            const date = new Date(lesson.date);
-            if (date.getMonth() === month && date.getFullYear() === year) {
-                if (!lessonDates[date.getDate()]) {
-                    lessonDates[date.getDate()] = [];
-                }
-                lessonDates[date.getDate()].push(lesson);
-            }
-        });
-        for (let day = 1; day <= daysInMonth; day++) {
-            const hasLesson = lessonDates[day];
-            cells.push(
-                <div key={`day-${day}`} className={`p-2 border border-gray-200 dark:border-gray-700 min-h-[80px] ${hasLesson ? 'bg-blue-50 dark:bg-blue-900/30' : ''}`}>
-                    <div className="font-medium">{day}</div>
-                    {hasLesson && (
-                        <div className="mt-1 space-y-1">
-                            {lessonDates[day].map((lesson, idx) => (
-                                <div key={idx} className="text-xs p-1 bg-blue-100 dark:bg-blue-800 rounded mb-1 truncate">
-                                    <div className="font-semibold">{lesson.time}</div>
-                                    <div className="text-xs text-gray-700 dark:text-gray-200 truncate">
-                                        with {lesson.tutorName}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            );
-        }
-        return <div className="grid grid-cols-7">{cells}</div>;
     };
 
     return (
@@ -722,7 +557,7 @@ const ParentLogin = () => {
                                         ))}
                                     </div>
                                     <div className="mt-6">
-                                        <button className="w-full bg-blue-600 dark:bg-blue-400 text-white dark:text-gray-900 py-3 rounded-lg font-bold hover:bg-blue-700 dark:hover:bg-blue-300">
+                                        <button className="w-full text-center text-sm font-semibold text-white bg-blue-600 dark:bg-blue-400 py-3 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-300 transition-colors">
                                             Confirm Session
                                         </button>
                                     </div>
@@ -758,7 +593,7 @@ const ParentLogin = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Subjects</h3>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {['Mathematics', 'Physics', 'English ', 'Literature', 'Chemistry', 'Biology', 'Chinese', 'Principle of Accounting', 'Geography', 'Economics'].map(subject => (
+                                                    {['Mathematics', 'Physics', 'English Literature', 'Writing', 'Chemistry', 'Biology', 'Computer Science', 'History', 'Social Studies', 'Spanish', 'French'].map(subject => (
                                                         <button
                                                             key={subject}
                                                             onClick={() => toggleSubjectFilter(subject)}
@@ -800,7 +635,7 @@ const ParentLogin = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Tutor Background</h3>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {[ 'MOE Teacher', 'Undergraduate', 'Part-Time Tutors', 'Full-Time Tutors'].map(background => (
+                                                    {['MOE teacher', 'Undergraduate', 'Private Tutor', 'Part-time Tutors', 'Tuition Centre Tutor'].map(background => (
                                                         <button
                                                             key={background}
                                                             onClick={() => toggleTutorBackgroundFilter(background)}
@@ -828,13 +663,13 @@ const ParentLogin = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Grade Level</h3>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {['P3', 'P4', 'P5', 'P6', 'Sec 1', 'Sec 2', 'Sec 3', 'Sec 4', 'JC 1', 'JC 2'].map(grade => (
+                                                    {['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'Sec 1', 'Sec 2', 'Sec 2', 'Sec 3', 'Sec 4', 'JC1', 'JC2'].map(grade => (
                                                         <button
                                                             key={grade}
                                                             onClick={() => toggleGradeFilter(grade)}
                                                             className={`text-sm px-3 py-1 rounded-full border ${activeFilters.gradeRange.includes(grade) ? 'bg-blue-600 text-white dark:bg-blue-400 dark:text-gray-900 border-blue-600 dark:border-blue-400' : 'bg-white text-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 dark:border-gray-700'}`}
                                                         >
-                                                            Grade {grade}
+                                                             {grade}
                                                         </button>
                                                     ))}
                                                 </div>
@@ -905,226 +740,10 @@ const ParentLogin = () => {
                             )}
                         </div>
                     )}
-                    {activeTab === 'profile' && (
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">
-                                Parent Profile
-                            </h1>
-                            <form onSubmit={handleSaveProfile} className="space-y-6">
-                                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                                        Personal Information
-                                    </h2>
-                                    <div className="flex items-center space-x-6 mb-6">
-                                        <img
-                                            src={editedProfile.image}
-                                            alt="Profile Preview"
-                                            className="w-24 h-24 rounded-full object-cover border-4 border-blue-200 dark:border-blue-700"
-                                        />
-                                        <div>
-                                            <label htmlFor="profile-picture" className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-                                                Change Profile Picture
-                                            </label>
-                                            <input
-                                                type="file"
-                                                id="profile-picture"
-                                                accept="image/*"
-                                                onChange={handleProfilePicChange}
-                                                className="block w-full text-sm text-gray-500
-                                                    file:mr-4 file:py-2 file:px-4
-                                                    file:rounded-full file:border-0
-                                                    file:text-sm file:font-semibold
-                                                    file:bg-blue-50 file:text-blue-700
-                                                    hover:file:bg-blue-100"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                Name
-                                            </label>
-                                            <input
-                                                type="text"
-                                                id="name"
-                                                name="name"
-                                                value={editedProfile.name}
-                                                onChange={handleParentChange}
-                                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-900 dark:text-white"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                Email
-                                            </label>
-                                            <input
-                                                type="email"
-                                                id="email"
-                                                name="email"
-                                                value={editedProfile.email}
-                                                onChange={handleParentChange}
-                                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-900 dark:text-white"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                Phone Number
-                                            </label>
-                                            <input
-                                                type="tel"
-                                                id="phone"
-                                                name="phone"
-                                                value={editedProfile.phone}
-                                                onChange={handleParentChange}
-                                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-900 dark:text-white"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                                    <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                                        Children Information
-                                    </h2>
-                                    <div className="space-y-4">
-                                        {editedProfile.children.map((child, index) => (
-                                            <div key={index} className="bg-gray-50 dark:bg-gray-900 p-4 rounded-md">
-                                                <div className="flex justify-between items-center mb-2">
-                                                    <h3 className="font-medium text-gray-800 dark:text-white">Child {index + 1}</h3>
-                                                    <button type="button" onClick={() => removeChild(index)} className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200">
-                                                        <Trash2 className="h-5 w-5" />
-                                                    </button>
-                                                </div>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <div>
-                                                        <label htmlFor={`childName-${index}`} className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                            Name
-                                                        </label>
-                                                        <input
-                                                            type="text"
-                                                            id={`childName-${index}`}
-                                                            name="childName"
-                                                            value={child.childName}
-                                                            onChange={(e) => handleChildChange(index, e)}
-                                                            className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-800 dark:text-white"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label htmlFor={`childAcademicLevel-${index}`} className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                            Academic Level
-                                                        </label>
-                                                        <select
-                                                            id={`childAcademicLevel-${index}`}
-                                                            name="childAcademicLevel"
-                                                            value={child.childAcademicLevel}
-                                                            onChange={(e) => handleChildChange(index, e)}
-                                                            className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-800 dark:text-white"
-                                                        >
-                                                            <option value="">Select Level</option>
-                                                            {academicLevels.map(level => (
-                                                                <option key={level} value={level}>{level}</option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <button type="button" onClick={addChild} className="mt-4 flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 text-sm font-medium">
-                                        <PlusCircle className="h-5 w-5 mr-1" /> Add another child
-                                    </button>
-                                </div>
-                                <div className="flex justify-end">
-                                    <button type="submit" className="px-6 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-400 dark:text-gray-900 dark:hover:bg-blue-300">
-                                        Save Changes
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    )}
-                    {activeTab === 'messages' && (
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">
-                                Messages
-                            </h1>
-                            <div className="space-y-4">
-                                {recentMessages.map(msg => (
-                                    <div key={msg.tutorId} className="flex items-center space-x-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                        <img src={msg.tutorImage} alt={msg.tutorName} className="w-12 h-12 rounded-full object-cover" />
-                                        <div className="flex-1">
-                                            <h3 className="font-semibold text-gray-800 dark:text-white">{msg.tutorName}</h3>
-                                            <p className={`text-sm ${msg.unread ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>
-                                                {msg.lastMessage}
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-col items-end text-sm">
-                                            <span className="text-gray-500 dark:text-gray-400">{msg.timestamp}</span>
-                                            {msg.unread && (
-                                                <span className="mt-1 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
-                                                    1
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                    {activeTab === 'calendar' && (
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">
-                                Your Sessions Calendar
-                            </h1>
-                            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                                {renderCalendarHeader()}
-                                {renderCalendarDays()}
-                                {renderCalendarCells()}
-                            </div>
-                        </div>
-                    )}
-                    {activeTab === 'progress' && (
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">
-                                Student Progress Tracker
-                            </h1>
-                            <div className="space-y-6">
-                                {studentProgress.map(student => (
-                                    <div key={student.id} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                                                {student.name} - {student.subject}
-                                            </h2>
-                                            <span className="text-sm text-gray-500 dark:text-gray-400">
-                                                Last updated: {student.lastUpdated}
-                                            </span>
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <h3 className="font-semibold text-gray-700 dark:text-gray-300">
-                                                    Recent Grades
-                                                </h3>
-                                                <div className="mt-2 space-y-2">
-                                                    {student.grades.map((grade, index) => (
-                                                        <div key={index} className="flex justify-between items-center text-sm">
-                                                            <span className="text-gray-600 dark:text-gray-400">{student.tests[index]}</span>
-                                                            <span className="font-medium text-gray-800 dark:text-white">{grade}%</span>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <h3 className="font-semibold text-gray-700 dark:text-gray-300">
-                                                    Tutor Notes from {student.tutorName}
-                                                </h3>
-                                                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                                    {student.notes}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                    {activeTab === 'profile' && <ParentProfile parentProfile={parentProfile} setParentProfile={setParentProfile} />}
+                    {activeTab === 'messages' && <Messages recentMessages={recentMessages} />}
+                    {activeTab === 'calendar' && <Calendar upcomingLessons={upcomingLessons} />}
+                    {activeTab === 'progress' && <ProgressTracker studentProgress={studentProgress} />}
                 </section>
             )}
         </main>
