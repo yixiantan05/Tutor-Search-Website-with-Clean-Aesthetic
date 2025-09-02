@@ -663,7 +663,7 @@ const ParentLogin = () => {
                                             <div>
                                                 <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Grade Level</h3>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'Sec 1', 'Sec 2', 'Sec 2', 'Sec 3', 'Sec 4', 'JC1', 'JC2'].map(grade => (
+                                                    {['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'Sec 1', 'Sec 2', 'Sec 3', 'Sec 4', 'JC1', 'JC2'].map(grade => (
                                                         <button
                                                             key={grade}
                                                             onClick={() => toggleGradeFilter(grade)}
